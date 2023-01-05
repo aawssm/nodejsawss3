@@ -32,9 +32,12 @@ app.get('/', (req, res) => {
             return;
         }
         res.send(`
-        <h1>Buckets:</h1>
+        <h1>
+        List of Avaialbe Buckets :
+        <a href="/upload"> Click here To Upload</a>
+        </h1>
         <ul>
-          ${data.Buckets.map(b => `<li>${b.Name}</li>`).join('')}
+          ${data.Buckets.map(b => `<li><a href="/bucket/${b.Name}">${b.Name}</a></li>`).join('')}
         </ul>
       `);
     });
@@ -51,7 +54,7 @@ app.get('/bucket/:name', (req, res) => {
         res.send(`
         <h1>Objects in bucket ${name}:</h1>
         <ul>
-          ${data.Contents.map(o => `<li>${o.Key}</li>`).join('')}
+          ${data.Contents.map(o => `<li><a href="/bucket/${name}/${encodeURIComponent(o.Key)}">${o.Key}</a></li>`).join('')}
         </ul>
       `);
     });
@@ -67,7 +70,11 @@ app.get('/bucket/:name/:key', (req, res) => {
             return;
         }
         res.send(`
-        <h1>Object: ${key}</h1>
+        <h1>Object: ${key}</h1>        
+        <ul>
+        <li><a href="/bucket/${name}/${encodeURIComponent(key)}/link"> Genrate sharable link</a></li>
+        <li><a href="/delete/${name}/${encodeURIComponent(key)}"> Click here to delete</a></li>
+        </ul>
         <h2>Preview:</h2>
         <img src="data:${data.ContentType};base64,${data.Body.toString('base64')}" alt="Object preview" />
         <h2>Properties:</h2>
@@ -79,15 +86,15 @@ app.get('/bucket/:name/:key', (req, res) => {
 });
 
 
-app.delete('/bucket/:name/:key', (req, res) => {
+app.get('/delete/:name/:key', (req, res) => {
     const { name, key } = req.params;
     s3.deleteObject({ Bucket: name, Key: key }, (err) => {
         if (err) {
             console.error(err);
             res.status(500).send(`Error deleting object ${key} from bucket ${name}`);
             return;
-        }
-        res.send(`Object ${key} was deleted from bucket ${name}`);
+        }        
+        res.redirect(`/bucket/${name}`);
     });
 });
 
@@ -105,6 +112,51 @@ app.get('/bucket/:name/:key/link', (req, res) => {
     `);
 });
 
+
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3, // The S3 client object that you created earlier
+        bucket: (req, file, cb) => {
+            // Allow the user to select the bucket by passing it as a query parameter
+            cb(null, req.body.bucket);
+        },
+        key: (req, file, cb) => {
+            // Use the original file name as the key (i.e., the file name in S3)
+            cb(null, file.originalname);
+        }
+    })
+});
+
+app.get('/upload', (req, res) => {
+    s3.listBuckets((err, data) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error listing buckets');
+            return;
+        }
+        res.send(`
+        <h1>Upload a file</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+          <div>
+            <label for="bucket">Bucket:</label>
+            <select name="bucket" id="bucket">
+              ${data.Buckets.map(b => `<option value="${b.Name}">${b.Name}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label for="file">File:</label>
+            <input type="file" name="file" id="file" />
+          </div>
+          <input type="submit" value="Upload" />
+        </form>
+      `);
+    });
+});
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    res.send(`File uploaded to bucket ${req.body.bucket}`);
+});
 
 app.listen(8080, () => {
     console.log("Server listening on port 8080.");

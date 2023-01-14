@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "api": "nodemon apiversion.js",
+    "demo": "nodemon demo.js",
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,7 +23,9 @@
   "homepage": "https://github.com/aawssm/nodejsawss3#readme",
   "dependencies": {
     "aws-sdk": "^2.1288.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
     "multer-s3": "^2.10.0"

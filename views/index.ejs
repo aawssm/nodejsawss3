@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bucket List</title>
+  </head>
+  <body>
+    <div style="text-align: center">
+      <h1>List of Bucket(s)</h1>
+      <ul>
+        <% bucketList.forEach((b) => { %>
+        <li><a href="/bucket/<%= b %>"><%= b %></a></li>
+        <% }) %>
+      </ul>
+    </div>
+  </body>
+
+  <link rel="stylesheet" href="/index.css" />
+</html>

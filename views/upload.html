@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>S3 Object Storage Upload with Node.js</title>
+    <link rel="stylesheet" href="./upload.css" />
+  </head>
+  <body>
+    <h2>S3 Object Storage Upload with Node.js</h2>
+    <div id="uploadMessage" class="message"></div>
+    <label id="resetForm" class="reset">
+      <span>Click Here to Reset the Form</span>
+    </label>
+    <form id="uploadForm" method="post" enctype="multipart/form-data">
+      <div class="form-hint">
+        Please select a bucket using the dropdown menu.
+      </div>
+      <select name="selectBucket" id="selectBucket">
+        <option>Select a Bucket</option>
+      </select>
+      <div class="form-hint">Please select one or more files to upload.</div>
+      <label class="upload">
+        <input
+          type="file"
+          multiple
+          name="uploadFilesInput"
+          id="uploadFilesInput"
+        />
+        <span>Click Here to Select Files</span>
+      </label>
+      <div id="filesListCount" class="form-hint" for="filesList"></div>
+      <ul id="filesList"></ul>
+      <label id="submitButton" class="submit">
+        <input type="submit" value="submit" />
+        <span>Submit</span>
+      </label>
+    </form>
+    <script src="upload.js"></script>
+  </body>
+</html>

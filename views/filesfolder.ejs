@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Objects in bucket <%= bucketName %></title>
+  </head>
+  <body>
+    <h1>
+      Objects in bucket <%= bucketName %>:
+      <a href="/upload"> Click here To Upload</a>
+    </h1>
+    <ul>
+      <% Object.keys(folders).forEach((f) => { %> <% if (f === ".") { %> <%
+      folders[f].forEach((o) => { %>
+      <li>
+        <a
+          href="/file/<%= bucketName %>/<%= encodeURIComponent(addToUrl + o.Key) %>"
+          ><%= o.Key %></a
+        >
+        <form
+          action="/delete/<%= bucketName %>/<%= encodeURIComponent(addToUrl + o.Key) %>"
+          method="post"
+        >
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+      <% }) %> <% } else { %>
+      <li>
+        <a
+          href="/bucket/<%= bucketName %>/<%= encodeURIComponent(addToUrl + f) %>"
+          ><%= f %>/</a
+        >
+      </li>
+      <% } %> <% }) %>
+    </ul>
+  </body>
+  <link rel="stylesheet" href="/index.css" />
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>File properties</title>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+  <body>
+    <ul>
+      <li class="li-b">
+        <h1 class="filename">File properties:</h1>
+      </li>
+      <li class="li-b">
+        <button
+          id="share-button"
+          onclick="getSharableLink('<%= bucketName %>','<%= key %>')"
+        >
+          Generate Shareable Link
+        </button>
+      </li>
+      <li class="li-b">
+        <form
+          action="/delete/<%= bucketName %>/<%= encodeURIComponent(key) %>"
+          method="post"
+        >
+          <button type="submit">Click here to Delete</button>
+        </form>
+      </li>
+    </ul>
+    <ul class="ul-b">
+      <li class="li-b">Bucket: <%= bucketName %></li>
+      <li class="li-b">Key: <%= key %></li>
+      <li class="li-b">Size: <%= object.ContentLength %> bytes</li>
+      <li class="li-b">Content type: <%= object.ContentType %></li>
+    </ul>
+    <% if (key.endsWith('.txt') || key.endsWith('.dart') || key.endsWith('.js'))
+    { %>
+    <h1>File preview:</h1>
+    <pre><%= object.Body.toString('utf-8') %></pre>
+    <% } else { %>
+    <h1>Image preview:</h1>
+    <img
+      alt=""
+      src="data:<%= object.ContentType %>;base64,<%= Buffer.from(object.Body).toString('base64') %>"
+    />
+    <% } %>
+  </body>
+  <script>
+    const share_button = document.getElementById("share-button");
+    function getSharableLink(bucketName, key) {
+      share_button.innerHTML = "Generating...";
+      fetch(`/share/${bucketName}/${encodeURIComponent(key)}`)
+        .then((response) => response.text())
+        .then((url) => {
+          navigator.clipboard.writeText(url);
+          share_button.innerHTML = "Copied to clipboard";
+        });
+    }
+  </script>
+</html>

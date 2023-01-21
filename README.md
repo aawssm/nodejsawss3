@@ -17,6 +17,10 @@ Here is a list of some of the major cloud storage providers that are compatible 
 10. Backblaze B2 Cloud Storage
 11. MINIO
 
+## Getting Started
+
+### [YouTube Video](https://youtu.be/R9Dob4csnAE) is not a bad place to start
+
 ## Prerequisites
 
 1. Node.js
